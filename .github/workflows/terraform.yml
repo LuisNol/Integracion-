@@ -3,7 +3,7 @@ name: Terraform CI/CD
 on:
   push:
     branches:
-      - main  # Cambia "main" si usas otra rama para los despliegues
+      - main  # Cambia "main" si usas otra rama para despliegues
 
 jobs:
   terraform:
@@ -15,21 +15,28 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: 1.0.0  # Cambia a la versión de Terraform que estás usando
+          terraform_version: 1.9.6 
 
       - name: Terraform Init
         run: terraform init
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: "us-east-1"  # Agrega la región como variable de entorno
+          AWS_PROFILE: ""  # Fuerza a no usar ningún perfil
 
       - name: Terraform Plan
         run: terraform plan -out=plan.out
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_PROFILE: ""  # Asegúrate de que no intente usar el perfil "default"
+          AWS_REGION: "us-east-1"  # Agrega la región como variable de entorno
+          AWS_PROFILE: ""  # Fuerza a no usar ningún perfil
 
       - name: Terraform Apply
         run: terraform apply -auto-approve plan.out
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_PROFILE: ""  # Asegúrate de que no intente usar el perfil "default"
+          AWS_REGION: "us-east-1"  # Agrega la región como variable de entorno
+          AWS_PROFILE: ""  # Fuerza a no usar ningún perfil
