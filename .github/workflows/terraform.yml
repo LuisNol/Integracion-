@@ -3,38 +3,56 @@ name: Terraform CI/CD
 on:
   push:
     branches:
-      - main  # Cambia "main" si usas otra rama para despliegues
+      - main  # Se ejecutará cuando haya un push en la rama 'main'
 
 jobs:
-  terraform:
+  build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      # Paso 1: Checkout del repositorio
+      - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Set up Terraform
+      # Paso 2: Login a Amazon ECR
+      - name: Login to Amazon ECR
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 022499025438.dkr.ecr.us-east-1.amazonaws.com
+
+      # Paso 3: Construir la imagen Docker
+      - name: Build Docker Image
+        run: |
+          docker build -t ecr_hola_mundo .
+          docker tag ecr_hola_mundo:latest 022499025438.dkr.ecr.us-east-1.amazonaws.com/ecr_hola_mundo:latest
+
+      # Paso 4: Subir la imagen Docker a Amazon ECR
+      - name: Push Docker Image to Amazon ECR
+        run: docker push 022499025438.dkr.ecr.us-east-1.amazonaws.com/ecr_hola_mundo:latest
+
+      # Paso 5: Configurar Terraform
+      - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: 1.9.6  # Asegúrate de usar esta versión
+          terraform_wrapper: false
 
+      # Paso 6: Inicializar Terraform
       - name: Terraform Init
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "us-east-1"  # Cambia esta región si es necesario
         run: terraform init
 
+      # Paso 7: Planificar los cambios de Terraform
       - name: Terraform Plan
+        run: terraform plan
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "us-east-1"  # Cambia esta región si es necesario
-        run: terraform plan -out=plan.out
 
+      # Paso 8: Aplicar los cambios de Terraform
       - name: Terraform Apply
+        run: terraform apply -auto-approve
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "us-east-1"  # Cambia esta región si es necesario
-        run: terraform apply -auto-approve plan.out
 
