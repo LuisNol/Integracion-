@@ -15,29 +15,30 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
         with:
-          terraform_version: 1.9.6  # Cambia si usas otra versión
+          terraform_version: 1.9.6  # Versión de Terraform que usas
 
       - name: Terraform Init
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "us-east-1"  # Región que estás usando
-          AWS_PROFILE: ""  # Asegura que no use el perfil "default"
+          AWS_REGION: "us-east-1"  # Asegúrate de que esta sea tu región
+          AWS_PROFILE: ""  # Asegúrate de que no intente usar el perfil "default"
         run: terraform init
 
       - name: Terraform Plan
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "us-east-1"  # Región que estás usando
-          AWS_PROFILE: ""  # Asegura que no use el perfil "default"
+          AWS_REGION: "us-east-1"  # Asegúrate de que esta sea tu región
+          AWS_PROFILE: ""  # Asegúrate de que no intente usar el perfil "default"
         run: terraform plan -out=plan.out
 
       - name: Terraform Apply
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: "us-east-1"  # Región que estás usando
-          AWS_PROFILE: ""  # Asegura que no use el perfil "default"
+          AWS_REGION: "us-east-1"  # Asegúrate de que esta sea tu región
+          AWS_PROFILE: ""  # Asegúrate de que no intente usar el perfil "default"
         run: terraform apply -auto-approve plan.out
+
 
