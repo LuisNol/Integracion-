@@ -4,7 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Asientos del Estadio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet"> <!-- Añadir Google Fonts -->
     <style>
+        body {
+            font-family: 'Roboto', sans-serif; /* Aplicar la fuente Roboto */
+            background-color: #f4f4f4; /* Fondo suave */
+            color: #333; /* Color del texto */
+            text-align: center; /* Centrar el texto */
+            padding: 20px; /* Espaciado interno */
+        }
+        h1 {
+            font-size: 2.5em; /* Tamaño del encabezado principal */
+            margin-bottom: 20px; /* Espacio debajo del encabezado */
+        }
+        h2 {
+            font-size: 1.8em; /* Tamaño de los subtítulos */
+            margin-bottom: 10px; /* Espacio debajo de los subtítulos */
+        }
         .seat {
             width: 30px;
             height: 30px;
@@ -12,7 +28,10 @@
             display: inline-block;
             text-align: center;
             line-height: 30px;
+            border-radius: 5px; /* Bordes redondeados */
             border: 1px solid #333;
+            font-weight: bold; /* Negrita para los números de asientos */
+            transition: background-color 0.3s; /* Animación de color */
         }
         .occupied {
             background-color: red;

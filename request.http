@@ -3,7 +3,7 @@ POST http://localhost:9000/api/seats HTTP/1.1
 Content-Type: application/json
 
     {
-        "number": "A37",
+        "number": "A36",
         "isOccupied": true
     }
 

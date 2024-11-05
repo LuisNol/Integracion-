@@ -25,3 +25,9 @@ mongoose
 
 // Escuchando en el puerto
 app.listen(port, () => console.log("Servidor escuchando en el puerto", port));
+
+
+////
+
+// Ejecutar para prueba 
+//http://3.85.201.114:9000/
