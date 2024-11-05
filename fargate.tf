@@ -1,3 +1,8 @@
+variable "image_tag" {
+  description = "Tag de la imagen Docker a usar en la tarea ECS"
+  default     = "latest"
+}
+
 resource "aws_ecs_task_definition" "backend_task" {
   family                   = "backend_example_app_family"
   requires_compatibilities = ["FARGATE"]
@@ -10,7 +15,7 @@ resource "aws_ecs_task_definition" "backend_task" {
 [
   {
     "name": "example_app_container",
-    "image": "022499025438.dkr.ecr.us-east-1.amazonaws.com/ecr_hola_mundo:latest",
+    "image": "022499025438.dkr.ecr.us-east-1.amazonaws.com/ecr_hola_mundo:${var.image_tag}",
     "memory": 512,
     "essential": true,
     "portMappings": [
@@ -22,16 +27,12 @@ resource "aws_ecs_task_definition" "backend_task" {
     "environment": [
       {
         "name": "MONGODB_URI",
-        "value": "MONGODB_URI=mongodb+srv://luis:YWEbYXoBU31n4940@cluster0.pfp4z.mongodb.net/api_rest?retryWrites=true&w=majority"
+        "value": "mongodb+srv://luis:YWEbYXoBU31n4940@cluster0.pfp4z.mongodb.net/api_rest?retryWrites=true&w=majority"
       }
     ]
   }
 ]
 EOT
-}
-
-resource "aws_ecs_cluster" "backend_cluster" {
-  name = "backend_cluster_example_app"
 }
 
 resource "aws_ecs_service" "backend_service" {
@@ -46,4 +47,12 @@ resource "aws_ecs_service" "backend_service" {
     security_groups = [aws_security_group.security_group_example_app.id]
     assign_public_ip = true
   }
+
+  deployment_minimum_healthy_percent = 100
+  deployment_maximum_percent         = 200
+
+  lifecycle {
+    ignore_changes = [task_definition]
+  }
 }
+
