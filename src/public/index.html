@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asientos del Estadio</title>
+    <style>
+        .seat {
+            width: 30px;
+            height: 30px;
+            margin: 5px;
+            display: inline-block;
+            text-align: center;
+            line-height: 30px;
+            border: 1px solid #333;
+        }
+        .occupied {
+            background-color: red;
+        }
+        .available {
+            background-color: green;
+        }
+        #availableSeats, #occupiedSeats {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Asientos del Estadio</h1>
+    
+    <h2>Asientos Disponibles (Libres)</h2>
+    <div id="availableSeats"></div>
+    
+    <h2>Asientos Ocupados</h2>
+    <div id="occupiedSeats"></div>
+
+    <script>
+        async function fetchSeats() {
+            const response = await fetch('/api/seats');
+            const seats = await response.json();
+            
+            const availableSeatsContainer = document.getElementById('availableSeats');
+            const occupiedSeatsContainer = document.getElementById('occupiedSeats');
+
+            // Limpiar las secciones
+            availableSeatsContainer.innerHTML = '';
+            occupiedSeatsContainer.innerHTML = '';
+
+            // Clasificar y mostrar asientos
+            seats.forEach(seat => {
+                const seatDiv = document.createElement('div');
+                seatDiv.className = 'seat ' + (seat.isOccupied ? 'occupied' : 'available');
+                seatDiv.textContent = seat.number;
+
+                if (seat.isOccupied) {
+                    occupiedSeatsContainer.appendChild(seatDiv);
+                } else {
+                    availableSeatsContainer.appendChild(seatDiv);
+                }
+            });
+        }
+
+        fetchSeats();
+    </script>
+</body>
+</html>
