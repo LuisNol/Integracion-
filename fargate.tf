@@ -1,8 +1,15 @@
+# Variable para definir la etiqueta de la imagen
 variable "image_tag" {
   description = "Tag de la imagen Docker a usar en la tarea ECS"
   default     = "latest"
 }
 
+# Declaración del cluster ECS
+resource "aws_ecs_cluster" "backend_cluster" {
+  name = "backend_cluster_example_app"
+}
+
+# Definición de la tarea ECS
 resource "aws_ecs_task_definition" "backend_task" {
   family                   = "backend_example_app_family"
   requires_compatibilities = ["FARGATE"]
@@ -15,7 +22,7 @@ resource "aws_ecs_task_definition" "backend_task" {
 [
   {
     "name": "example_app_container",
-    "image": "022499025438.dkr.ecr.us-east-1.amazonaws.com/ecr_hola_mundo:latest",
+    "image": "022499025438.dkr.ecr.us-east-1.amazonaws.com/ecr_hola_mundo:${var.image_tag}",
     "memory": 512,
     "essential": true,
     "portMappings": [
@@ -35,6 +42,7 @@ resource "aws_ecs_task_definition" "backend_task" {
 EOT
 }
 
+# Servicio ECS utilizando la definición de tarea
 resource "aws_ecs_service" "backend_service" {
   name            = "backend_service"
   cluster         = aws_ecs_cluster.backend_cluster.id
@@ -55,4 +63,5 @@ resource "aws_ecs_service" "backend_service" {
     ignore_changes = [task_definition]
   }
 }
+
 
