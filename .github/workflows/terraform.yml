@@ -22,10 +22,12 @@ jobs:
 
       - name: Build Docker Image
         run: |
+          # Construye solo la imagen con la etiqueta 'latest'
           docker build -t 022499025438.dkr.ecr.us-east-1.amazonaws.com/ecr_hola_mundo:latest .
 
       - name: Push Docker Image to Amazon ECR
         run: |
+          # Empuja solo la imagen con la etiqueta 'latest', sin crear otra imagen
           docker push 022499025438.dkr.ecr.us-east-1.amazonaws.com/ecr_hola_mundo:latest
 
       - name: Setup Terraform
@@ -41,5 +43,4 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
 
